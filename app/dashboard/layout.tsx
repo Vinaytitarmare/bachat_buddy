@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useFinance } from "@/contexts/finance-context";
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function SearchParamsHandler() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const isDemo = searchParams.get("demo") === "true";
   
   const { 
@@ -32,8 +27,19 @@ export default function DashboardLayout({
     }
   }, [isDemo, hasData, loadDemoData, setMonthlyIncome, analyzeData]);
 
+  return null;
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen bg-background">
+      <Suspense fallback={null}>
+        <SearchParamsHandler />
+      </Suspense>
       <SidebarNav />
       <main className="lg:pl-64">
         <div className="min-h-screen">
@@ -43,3 +49,4 @@ export default function DashboardLayout({
     </div>
   );
 }
+
